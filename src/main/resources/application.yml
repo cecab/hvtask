@@ -1,0 +1,22 @@
+micronaut:
+  application:
+    name: hvtask
+datasources:
+  default:
+    url: jdbc:postgresql://${DBHOST:`localhost`}:${DBPORT:35432}/hvdb
+    driverClassName: org.postgresql.Driver
+    username: postgres
+    password: postgres
+netty:
+  default:
+    allocator:
+      max-order: 3
+liquibase:
+  datasources:
+    default:
+      change-log: classpath:db/liquibase-changelog.xml
+
+mqtt:
+  client:
+    server-uri: tcp://${mqtt.host}:${mqtt.port}
+    client-id: ${random.uuid}
