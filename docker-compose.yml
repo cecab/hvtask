@@ -1,0 +1,25 @@
+version: '3.8'
+services:
+  db:
+    image: postgres:14.1-alpine
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - '35432:5432'
+    volumes:
+      - db-hv:/var/lib/postgresql/data
+  hvtask:
+    build: .
+    depends_on:
+      - db
+    environment:
+      - DBHOST=db
+      - DBPORT=5432
+    image: hvtask:latest
+    ports:
+      - '38080:8080'
+
+volumes:
+  db-hv:
+    driver: local
