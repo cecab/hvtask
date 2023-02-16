@@ -40,6 +40,19 @@ class MqttControllerTest {
         Assertions.assertTrue(persistedBroker.isPresent());
         Assertions.assertEquals(expectedCreatedBroker, persistedBroker.get());
     }
+    @Test
+    void testPutBrokerDetectDuplicates() {
+        var newBroker = new BrokerPutRequest("hostLocalhost", 65423);
+        var expectedCreatedBroker = new Broker("testBroker", "hostLocalhost", 65423);
+        client.toBlocking().exchange(HttpRequest.PUT("/mqtt/testBroker", newBroker), Broker.class);
+
+        var httpClientResponseException =
+                Assertions.assertThrowsExactly(HttpClientResponseException.class, () -> {
+            client.toBlocking().exchange(HttpRequest.PUT("/mqtt/testBroker", newBroker), Broker.class);
+        });
+
+        Assertions.assertEquals(400, httpClientResponseException.getStatus().getCode());
+    }
 
     @Test
     void testDeleteBroker() {
