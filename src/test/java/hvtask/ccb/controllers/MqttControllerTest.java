@@ -16,6 +16,9 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 @MicronautTest
 class MqttControllerTest {
     @Inject
@@ -37,7 +40,7 @@ class MqttControllerTest {
         var result = client.toBlocking().exchange(HttpRequest.PUT("/mqtt/testBroker", newBroker), Broker.class);
         Optional<Broker> persistedBroker = result.getBody(Broker.class);
 
-        Assertions.assertTrue(persistedBroker.isPresent());
+        assertTrue(persistedBroker.isPresent());
         Assertions.assertEquals(expectedCreatedBroker, persistedBroker.get());
     }
     @Test
@@ -61,6 +64,19 @@ class MqttControllerTest {
         HttpResponse<Object> exchange = client.toBlocking().exchange(HttpRequest.DELETE("/mqtt/testBroker"));
 
         Assertions.assertEquals(204, exchange.getStatus().getCode());
+    }
+
+    @Test
+    void testSenMessage() {
+        var newBroker = new BrokerPutRequest("localhost", 1883);
+        client.toBlocking().exchange(HttpRequest.PUT("/mqtt/localBroker", newBroker), Broker.class);
+        // Send message
+        var message = "Test message for TopicOne";
+        var httpResponse = client.toBlocking().exchange(HttpRequest.POST("/mqtt/localBroker/send/topicOne", message),
+                Object.class);
+
+        assertEquals(200, httpResponse.getStatus().getCode());
+
     }
 
 }
