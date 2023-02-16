@@ -26,6 +26,9 @@ dependencies {
         exclude group:'com.github.ben-manes.caffeine', module:'caffeine'
     }
     implementation("io.micronaut.sql:micronaut-jdbi")
+    implementation("org.jdbi:jdbi3-postgres"){
+        exclude group:'com.github.ben-manes.caffeine', module:'caffeine'
+    }
 
 }
 
