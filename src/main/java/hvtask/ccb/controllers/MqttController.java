@@ -3,11 +3,10 @@ package hvtask.ccb.controllers;
 import hvtask.ccb.models.Broker;
 import hvtask.ccb.models.BrokerPutRequest;
 import hvtask.ccb.storage.BrokerDao;
-import io.micronaut.http.annotation.Body;
-import io.micronaut.http.annotation.Controller;
-import io.micronaut.http.annotation.PathVariable;
-import io.micronaut.http.annotation.Put;
+import io.micronaut.http.annotation.*;
 import org.jdbi.v3.core.Jdbi;
+
+import java.util.Optional;
 
 @Controller("/mqtt")
 public class MqttController {
@@ -22,5 +21,10 @@ public class MqttController {
         var brokerDB = new Broker(brokername, newBroker.getHostname(), newBroker.getPort());
         jdbi.withExtension(BrokerDao.class, dao -> dao.insert(brokerDB));
         return brokerDB;
+    }
+
+    @Get("/{brokername}")
+    public Optional<Broker> getBroker(@PathVariable("brokername") String brokername) {
+        return jdbi.withExtension(BrokerDao.class, dao -> dao.findByName(brokername));
     }
 }
