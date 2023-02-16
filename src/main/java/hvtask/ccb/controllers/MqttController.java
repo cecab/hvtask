@@ -2,7 +2,7 @@ package hvtask.ccb.controllers;
 
 import hvtask.ccb.models.Broker;
 import hvtask.ccb.models.BrokerPutRequest;
-import hvtask.ccb.services.Publisher;
+import hvtask.ccb.services.MqttConnectionService;
 import hvtask.ccb.storage.BrokerDao;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
@@ -15,11 +15,11 @@ import java.util.Optional;
 @Controller("/mqtt")
 public class MqttController {
     private final Jdbi jdbi;
-    private final Publisher publisher;
+    private final MqttConnectionService mqttConnectionService;
 
-    public MqttController(Jdbi jdbi, Publisher publisher) {
+    public MqttController(Jdbi jdbi, MqttConnectionService mqttConnectionService) {
         this.jdbi = jdbi;
-        this.publisher = publisher;
+        this.mqttConnectionService = mqttConnectionService;
     }
 
     @Put("/{brokername}")
@@ -57,7 +57,9 @@ public class MqttController {
             @PathVariable("topicname") String topicname,
             @Body String message
     ) {
-        publisher.publish(topicname,message);
+        mqttConnectionService.lookupPublisher(brokername).ifPresent(publisher -> {
+            publisher.publish(topicname, message);
+        });
         return HttpResponse.ok();
     }
 
