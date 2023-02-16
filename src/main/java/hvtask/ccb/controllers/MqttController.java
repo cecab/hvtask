@@ -20,10 +20,17 @@ public class MqttController {
     }
 
     @Put("/{brokername}")
-    public Broker addBroker(@PathVariable("brokername") String brokername, @Body BrokerPutRequest newBroker) {
+    public HttpResponse<Object> addBroker(@PathVariable("brokername") String brokername,
+                                          @Body BrokerPutRequest newBroker) {
         var brokerDB = new Broker(brokername, newBroker.getHostname(), newBroker.getPort());
-        jdbi.withExtension(BrokerDao.class, dao -> dao.insert(brokerDB));
-        return brokerDB;
+        Optional<Broker> previousSavedBroker = jdbi.withExtension(BrokerDao.class, dao -> dao.findByName(brokername));
+        return previousSavedBroker.map(prevBroker -> HttpResponse.<Object>badRequest(Map.of("error",
+                        String.format("Broker with name '%s' already exists, delete it before sending a PUT request.",
+                                brokername))))
+                .orElseGet(() -> {
+                    jdbi.withExtension(BrokerDao.class, dao -> dao.insert(brokerDB));
+                    return HttpResponse.ok(brokerDB);
+                });
     }
 
     @Get("/{brokername}")
