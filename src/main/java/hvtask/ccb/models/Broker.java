@@ -7,6 +7,9 @@ public class Broker {
     private String hostname;
     private int port;
 
+    public Broker() {
+    }
+
     public Broker(String name, String hostname, int port) {
         this.name = name;
         this.hostname = hostname;
@@ -23,6 +26,18 @@ public class Broker {
 
     public int getPort() {
         return port;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setHostname(String hostname) {
+        this.hostname = hostname;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
     }
 
     @Override
