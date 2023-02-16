@@ -3,8 +3,10 @@ package hvtask.ccb.controllers;
 import hvtask.ccb.models.Broker;
 import hvtask.ccb.models.BrokerPutRequest;
 import io.micronaut.http.HttpRequest;
+import io.micronaut.http.HttpResponse;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
+import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import jakarta.inject.Inject;
 import org.jdbi.v3.core.Jdbi;
@@ -37,6 +39,15 @@ class MqttControllerTest {
 
         Assertions.assertTrue(persistedBroker.isPresent());
         Assertions.assertEquals(expectedCreatedBroker, persistedBroker.get());
+    }
+
+    @Test
+    void testDeleteBroker() {
+        var newBroker = new BrokerPutRequest("hostLocalhost", 65423);
+        client.toBlocking().exchange(HttpRequest.PUT("/mqtt/testBroker", newBroker), Broker.class);
+        HttpResponse<Object> exchange = client.toBlocking().exchange(HttpRequest.DELETE("/mqtt/testBroker"));
+
+        Assertions.assertEquals(204, exchange.getStatus().getCode());
     }
 
 }
