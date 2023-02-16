@@ -14,7 +14,7 @@ public interface BrokerDao {
     List<Broker> findAll();
 
     @SqlQuery("SELECT * from broker where name=:name")
-    Optional<Broker> findById(@Bind("name") String name);
+    Optional<Broker> findByName(@Bind("name") String name);
 
 
     @SqlUpdate("INSERT INTO broker(name,hostname,port) " + "values(:name,:hostname, :port)")
