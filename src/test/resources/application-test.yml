@@ -2,3 +2,17 @@ datasources:
   default:
     url: jdbc:tc:postgresql:12:///postgres
     driverClassName: org.testcontainers.jdbc.ContainerDatabaseDriver
+
+mqtt:
+  client:
+    server-uri: tcp://${mqtt.host}:${mqtt.port}
+    client-id: ${random.uuid}
+
+test-resources:
+  containers:
+    mqtt:
+      image-name: hivemq/hivemq-ce:2021.3
+      hostnames:
+        - mqtt.host
+      exposed-ports:
+        - mqtt.port: 1883

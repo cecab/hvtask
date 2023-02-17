@@ -1,6 +1,7 @@
 plugins {
     id("com.github.johnrengelman.shadow") version "7.1.2"
     id("io.micronaut.application") version "3.7.0"
+    id("io.micronaut.test-resources") version "3.7.0"
 }
 
 version = "0.1"
@@ -28,7 +29,6 @@ dependencies {
     implementation("org.jdbi:jdbi3-postgres"){
         exclude group:'com.github.ben-manes.caffeine', module:'caffeine'
     }
-    testImplementation("org.testcontainers:testcontainers:1.17.6")
     testImplementation("org.testcontainers:postgresql:1.17.6")
 
 }
