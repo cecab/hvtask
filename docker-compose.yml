@@ -9,6 +9,14 @@ services:
       - '35432:5432'
     volumes:
       - db-hv:/var/lib/postgresql/data
+
+  dbsetup:
+    image: postgres:14.1-alpine
+    depends_on:
+      - db
+    restart: "no"
+    entrypoint: [ "bash", "-c", "echo 'create database hvdb' | PGPASSWORD=postgres psql -h db --port 5432 -U postgres postgres "]
+
   mqttbroker:
     image: hivemq/hivemq-ce:2021.3
     platform: linux/amd64
@@ -18,7 +26,7 @@ services:
   hvtask:
     build: .
     depends_on:
-      - db
+      - dbsetup
       - mqttbroker
     environment:
       - DBHOST=db
