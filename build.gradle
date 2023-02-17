@@ -30,7 +30,7 @@ dependencies {
         exclude group:'com.github.ben-manes.caffeine', module:'caffeine'
     }
     testImplementation("org.testcontainers:postgresql:1.17.6")
-
+    implementation("io.micronaut.rxjava3:micronaut-rxjava3:2.4.0")
 }
 
 

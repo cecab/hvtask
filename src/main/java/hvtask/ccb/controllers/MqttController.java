@@ -7,6 +7,8 @@ import hvtask.ccb.storage.BrokerDao;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.annotation.*;
+import io.micronaut.websocket.WebSocketBroadcaster;
+import io.reactivex.rxjava3.core.Observable;
 import org.jdbi.v3.core.Jdbi;
 
 import java.util.Map;
@@ -16,10 +18,13 @@ import java.util.Optional;
 public class MqttController {
     private final Jdbi jdbi;
     private final MqttConnectionService mqttConnectionService;
+    private final WebSocketBroadcaster broadcaster;
 
-    public MqttController(Jdbi jdbi, MqttConnectionService mqttConnectionService) {
+    public MqttController(Jdbi jdbi, MqttConnectionService mqttConnectionService,
+                          WebSocketBroadcaster broadcaster) {
         this.jdbi = jdbi;
         this.mqttConnectionService = mqttConnectionService;
+        this.broadcaster = broadcaster;
     }
 
     @Put("/{brokername}")
@@ -63,4 +68,13 @@ public class MqttController {
         return HttpResponse.ok();
     }
 
+    @Get("/{brokername}/receive/{topicname}")
+    public Optional<Observable<String>> subscribe(
+            @PathVariable("brokername") String brokername,
+            @PathVariable("topicname") String topicname
+    ) {
+        return mqttConnectionService.lookupSubscriber(brokername, topicname)
+                .or(() -> Optional.of(Observable.just(String.format("The broker named '%s' was not found.",
+                        brokername))));
+    }
 }
