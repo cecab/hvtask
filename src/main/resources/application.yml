@@ -18,5 +18,5 @@ liquibase:
 
 mqtt:
   client:
-    server-uri: tcp://${MQTT_HOST:localhost}:${MQTT_PORT:1883}
+    server-uri: tcp://${MQTT_HOST:localhost}:${MQTT_PORT:56321}
     client-id: '123456789'

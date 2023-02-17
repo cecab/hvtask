@@ -9,10 +9,17 @@ services:
       - '35432:5432'
     volumes:
       - db-hv:/var/lib/postgresql/data
+  mqttbroker:
+    image: hivemq/hivemq-ce:2021.3
+    platform: linux/amd64
+    ports:
+      - '56321:1883'
+
   hvtask:
     build: .
     depends_on:
       - db
+      - mqttbroker
     environment:
       - DBHOST=db
       - DBPORT=5432
